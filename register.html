@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            background-color: #4b5563;
+        }
+
+        .video-container {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(40%);
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .register-form {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            width: 400px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ffb667;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 15px;
+            background:#60a5fa;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-btn:hover {
+            background: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+        }
+
+        .login-link a {
+            color: #ffb667;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #ffb667;
+        }
+
+        .password-requirements {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            margin-top: 5px;
+            padding-left: 15px;
+        }
+
+        .error-message {
+            color: #ffb667;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .success-message {
+            color: #ffb667;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video autoplay muted loop>
+            <source src="backvideo.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="container">
+        <form class="register-form" id="registerForm" method="POST" onsubmit="handleRegister(event)">
+            <h1>Create Account</h1>
+            <div class="input-group">
+                <input type="text" placeholder="Full Name" name="full_name" required>
+            </div>
+            <div class="input-group">
+                <input type="email" placeholder="Email Address" name="email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" placeholder="Password" name="password" required id="password">
+                <div class="password-requirements">
+                    Password must be at least 8 characters long
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="password" placeholder="Confirm Password" name="confirmPassword" id="confirmPassword" required>
+            </div>
+            <button type="submit" class="register-btn">Register</button>
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage">Registration successful!</div>
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function handleRegister(event) {
+            event.preventDefault();
+
+            const fullName = document.querySelector('input[name="full_name"]').value;
+            const email = document.querySelector('input[name="email"]').value;
+            const password = document.querySelector('input[name="password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            // Simple validation
+            if (password.length < 8) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Password must be at least 8 characters long';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Passwords do not match';
+                return;
+            }
+
+            // Store user data in localStorage (for demonstration purposes)
+            const userData = {
+                fullName: fullName,
+                email: email,
+                password: password
+            };
+
+            localStorage.setItem('user', JSON.stringify(userData));
+
+            // Show success message
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'block';
+
+            // Redirect to login page after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
